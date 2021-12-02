@@ -1,1 +1,1 @@
-# grundlagen-der-informatik-I
+# Grundlagen der Informatik I - DHBW Stuttgart
