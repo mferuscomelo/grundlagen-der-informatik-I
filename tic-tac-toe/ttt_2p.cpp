@@ -64,7 +64,7 @@ class Board {
          * @return  0: Draw
          *          1: Player 1 wins
          *          2: Player 2 wins
-         *        200: Player 2 wins
+         *        200: Continue
          */
         int checkWin() {
             // Check if a draw
