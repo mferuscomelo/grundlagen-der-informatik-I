@@ -5,11 +5,19 @@ class Board {
     public:
         char board[3][3];
 
+        /**
+         * @brief Construct a new Board object
+         * 
+         */
         Board() {
             memset(board, ' ', sizeof(char) * 3 * 3); // Initialize the board with spaces
         }
 
-        void draw() {
+        /**
+         * @brief Draws the board with the pieces
+         * 
+         */
+        void drawBoard() {
             printf("\n\n\n");
             // Iterate through the board's rows and columns
             for(int row = 0; row < 3; row++) {
@@ -26,6 +34,17 @@ class Board {
             printf("\n");  
         }
 
+        /**
+         * @brief Places a player token
+         * 
+         * @param playerNum The number of the player (1 or 2). Determines the token symbol
+         * @param position Where the token should be placed (1-9)
+         * @return -1: Invalid move
+         *          0: Draw
+         *          1: Player 1 wins
+         *          2: Player 2 wins
+         *        200: Continue
+         */
         int placeToken(int playerNum, int position) {
             const int row = position / 3;
             const int col = position % 3;
@@ -35,14 +54,22 @@ class Board {
             const char tokenChar = (playerNum == 1) ? 'X' : 'O';
             board[row][col] = tokenChar;
 
-            // If draw, returns 0
-            // If player 1 wins, returns 1
-            // If player 2 wins, returns 2
             return checkWin();
         }
     
     private:
+        /**
+         * @brief Checks result of a move
+         * 
+         * @return  0: Draw
+         *          1: Player 1 wins
+         *          2: Player 2 wins
+         *        200: Player 2 wins
+         */
         int checkWin() {
+            // Check if a draw
+            if (isBoardFull()) return 0;
+
             // Check all the rows
             for (int i = 0; i < 3; i++) {
                 if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != ' ') {
@@ -64,7 +91,22 @@ class Board {
                 return (board[0][2] == 'X') ? 1 : 2;
             }
 
-            return 0;
+            return 200;
+        }
+
+        /**
+         * @brief Check if the board is full
+         * 
+         * @return boolean
+         */
+        bool isBoardFull() {
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    if (board[row][col] == ' ') return false;
+                }
+            }
+
+            return true;
         }
 };
 
@@ -74,7 +116,7 @@ int main() {
     int playerNum = 1, position;
 
     for(int i = 0; i < 100; i++) {
-        b.draw();
+        b.drawBoard();
 
         printf("Player %d's turn: \n", playerNum);
 
@@ -83,15 +125,26 @@ int main() {
         scanf("%d", &position);
 
         const int moveResult = b.placeToken(playerNum, position - 1);
-        if (moveResult == -1) {
+
+        if(moveResult == -1) {
             printf("Invalid position. Please try again...\n");
-        } else if (moveResult > 0) {
-            b.draw();
-            printf("Player %d wins!\n", moveResult); // A player has won
+            continue;
+        } else if (moveResult == 0) {
+            // It's a draw
+            b.drawBoard();
+            printf("Draw!\n");
             break;
-        } else {
+        } else if (moveResult == 1 || moveResult == 2) {
+            // A player has won
+            b.drawBoard();
+            printf("Player %d wins!\n", moveResult);
+            break;
+        } else if (moveResult == 200) {
             playerNum = (playerNum == 1) ? 2 : 1; // Change player number
+        } else {
+            printf("Invalid moveResult: %d\nExiting...\n", moveResult);
         }
+
     }
 
     return 0;
