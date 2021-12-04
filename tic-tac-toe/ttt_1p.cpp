@@ -82,11 +82,14 @@ class Board {
             // Tips taken from here: https://www.wikihow.com/Win-at-Tic-Tac-Toe
             ++currentTurn;
 
+            bool hasPlacedToken = false;
+
             // Winning
             int row, col;
             std::tie (row, col) = checkAboutToWin('O');
             if (row != -1 && col != -1) {
                 board[row][col] = 'O';
+                hasPlacedToken = true;
                 return checkWin();
             }
 
@@ -94,6 +97,7 @@ class Board {
             std::tie (row, col) = checkAboutToWin('X');
             if (row != -1 && col != -1) {
                 board[row][col] = 'O';
+                hasPlacedToken = true;
                 return checkWin();
             }
 
@@ -106,16 +110,19 @@ class Board {
                 else if (board[1][0] == ' ')    board[1][0] = 'O';
                 else if (board[1][2] == ' ')    board[1][2] = 'O';
                 else if (board[2][1] == ' ')    board[2][1] = 'O';
+                else                            placeTokenRandomly();
             }
 
             // If the player has placed in the center, place in corner
             if (board[1][1] == 'X' && currentTurn == 2) {
                 board[0][0] = 'O';
+                hasPlacedToken = true;
             }
 
             // If the player has placed on the edge, place in center
             if ((board[0][1] == 'X' || board[1][0] == 'X' || board[1][2] == 'X' || board[2][1] == 'X') && currentTurn == 2) {
                 board[1][1] = 'O';
+                hasPlacedToken = true;
             } else if (currentTurn == 4 && firstMovePosition % 2 == 0) {
                 // If the player has placed their token so that it forms XOX (vertically or horizontally), place token in corner
                 if (
@@ -123,7 +130,12 @@ class Board {
                     (board[0][1] == 'X' && board[2][1] == 'X')      // Vertical pattern placed
                     ) {
                     board[0][0] = 'O'; // Place in corner
+                    hasPlacedToken = true;
                 }
+            }
+
+            if (!hasPlacedToken) {
+                placeTokenRandomly();
             }
 
             return checkWin();
@@ -222,6 +234,23 @@ class Board {
             }
 
             return true;
+        }
+
+        /**
+         * @brief Places a token in the first available space
+         * 
+         */
+        bool placeTokenRandomly() {
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    if (board[row][col] == ' ') {
+                        board[row][col] = 'O';
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 };
 
