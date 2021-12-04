@@ -25,16 +25,32 @@
 #define BOLDCYAN    "\033[1m\033[36m"
 #define BOLDWHITE   "\033[1m\033[37m"
 
+class Token {
+    public:
+        char symbol;
+        std::string color;
+
+        Token() {
+            symbol = ' ';
+            color = RESET;
+        }
+
+        void setSymbol(char s) {
+            symbol = s;
+            color = (s == 'X') ? YELLOW : BLUE;
+        }
+};
+
 class Board {
     public:
-        char board[3][3];
+        Token board[3][3];
 
         /**
          * @brief Construct a new Board object
          * 
          */
         Board() {
-            memset(board, ' ', sizeof(char) * 3 * 3); // Initialize the board with spaces
+            // memset(board, ' ', sizeof(char) * 3 * 3); // Initialize the board with spaces
         }
 
         /**
@@ -48,9 +64,8 @@ class Board {
                 printf("     |     |     \n"); // Add horizontal padding
 
                 for(int col = 0; col < 3; col++) {
-                    char symbol = board[row][col];
-                    symbol == 'X' ? printf(GREEN "  %c  ", symbol) : printf(YELLOW "  %c  ", symbol); // Print token with color and horizontal padding
-                    printf(RESET); // Reset color
+                    Token token = board[row][col];
+                    std::cout << token.color << "  " << token.symbol << "  " << RESET; // Print token with color and horizontal padding
 
                     col < 2 ? printf("|") : printf("\n"); // Add horizontal divider
                 }
@@ -75,10 +90,10 @@ class Board {
             const int row = (position - 1) / 3;
             const int col = (position - 1) % 3;
 
-            if (board[row][col] != ' ') return -1;
+            if (board[row][col].symbol != ' ') return -1;
 
             ++currentTurn; // Increment currentTurn counter
-            board[row][col] = 'X'; // Place token
+            board[row][col].setSymbol('X'); // Place token
 
             if (firstMovePosition == -1) {
                 firstMovePosition = position; // Update firstMovePosition
@@ -114,7 +129,7 @@ class Board {
             int row, col;
             std::tie (row, col) = checkAboutToWin('O');
             if (row != -1 && col != -1) {
-                board[row][col] = 'O';
+                board[row][col].setSymbol('O');
                 hasPlacedToken = true;
                 return checkWin();
             }
@@ -122,43 +137,43 @@ class Board {
             // Blocking
             std::tie (row, col) = checkAboutToWin('X');
             if (row != -1 && col != -1) {
-                board[row][col] = 'O';
+                board[row][col].setSymbol('O');
                 hasPlacedToken = true;
                 return checkWin();
             }
 
             // If the player has placed in a corner, place in center
-            if ((board[0][0] == 'X' || board[0][2] == 'X' || board[2][0] == 'X' || board[2][2] == 'X') && currentTurn == 2) {
-                board[1][1] = 'O';
+            if ((board[0][0].symbol == 'X' || board[0][2].symbol == 'X' || board[2][0].symbol == 'X' || board[2][2].symbol == 'X') && currentTurn == 2) {
+                board[1][1].setSymbol('O');
                 hasPlacedToken = true;
             } else if (currentTurn > 2 && firstMovePosition % 2 == 1 && firstMovePosition != 5) {
                 // Place token on an edge
-                if      (board[0][1] == ' ')    board[0][1] = 'O';
-                else if (board[1][0] == ' ')    board[1][0] = 'O';
-                else if (board[1][2] == ' ')    board[1][2] = 'O';
-                else if (board[2][1] == ' ')    board[2][1] = 'O';
+                if      (board[0][1].symbol == ' ')    board[0][1].setSymbol('O');
+                else if (board[1][0].symbol == ' ')    board[1][0].setSymbol('O');
+                else if (board[1][2].symbol == ' ')    board[1][2].setSymbol('O');
+                else if (board[2][1].symbol == ' ')    board[2][1].setSymbol('O');
                 else                            placeTokenRandomly();
 
                 hasPlacedToken = true;
             }
 
             // If the player has placed in the center, place in corner
-            if (board[1][1] == 'X' && currentTurn == 2) {
-                board[0][0] = 'O';
+            if (board[1][1].symbol == 'X' && currentTurn == 2) {
+                board[0][0].setSymbol('O');
                 hasPlacedToken = true;
             }
 
             // If the player has placed on the edge, place in center
-            if ((board[0][1] == 'X' || board[1][0] == 'X' || board[1][2] == 'X' || board[2][1] == 'X') && currentTurn == 2) {
-                board[1][1] = 'O';
+            if ((board[0][1].symbol == 'X' || board[1][0].symbol == 'X' || board[1][2].symbol == 'X' || board[2][1].symbol == 'X') && currentTurn == 2) {
+                board[1][1].setSymbol('O');
                 hasPlacedToken = true;
             } else if (currentTurn == 4 && firstMovePosition % 2 == 0) {
                 // If the player has placed their token so that it forms XOX (vertically or horizontally), place token in corner
                 if (
-                    (board[1][0] == 'X' && board[1][2] == 'X') ||   // Horizontal pattern placed
-                    (board[0][1] == 'X' && board[2][1] == 'X')      // Vertical pattern placed
+                    (board[1][0].symbol == 'X' && board[1][2].symbol == 'X') ||   // Horizontal pattern placed
+                    (board[0][1].symbol == 'X' && board[2][1].symbol == 'X')      // Vertical pattern placed
                     ) {
-                    board[0][0] = 'O'; // Place in corner
+                    board[0][0].setSymbol('O'); // Place in corner
                     hasPlacedToken = true;
                 }
             }
@@ -184,26 +199,52 @@ class Board {
 
             // Check all the rows
             for (int i = 0; i < 3; i++) {
-                if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != ' ') {
-                    return (board[i][0] == 'X') ? 1 : 2;
+                Token t1 = board[i][0];
+                Token t2 = board[i][1];
+                Token t3 = board[i][2];
+
+                if (t1.symbol == t2.symbol && t2.symbol == t3.symbol && t1.symbol != ' ') {
+                    highlightWinningPositions((3 * i) + 1, (3 * i) + 2, (3 * i) + 3);
+                    return (t1.symbol == 'X') ? 1 : 2;
                 }
             }
 
             // Check all the columns
             for (int i = 0; i < 3; i++) {
-                if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[0][i] != ' ') {
-                    return (board[0][i] == 'X') ? 1 : 2;
+                Token t1 = board[0][i];
+                Token t2 = board[1][i];
+                Token t3 = board[2][i];
+
+                if (t1.symbol == t2.symbol && t2.symbol == t3.symbol && t1.symbol != ' ') {
+                    highlightWinningPositions(1 + i, 4 + i, 7 + i);
+                    return (t1.symbol == 'X') ? 1 : 2;
                 }
             }
 
             // Check diagonals
-            if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != ' ') {
-                return (board[0][0] == 'X') ? 1 : 2;
-            } else if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != ' ') {
-                return (board[0][2] == 'X') ? 1 : 2;
+            if (board[0][0].symbol == board[1][1].symbol && board[1][1].symbol == board[2][2].symbol && board[0][0].symbol != ' ') {
+                highlightWinningPositions(1, 5, 9);
+                return (board[0][0].symbol == 'X') ? 1 : 2;
+            } else if (board[0][2].symbol == board[1][1].symbol && board[1][1].symbol == board[2][0].symbol && board[0][2].symbol != ' ') {
+                highlightWinningPositions(3, 5, 7);
+                return (board[0][2].symbol == 'X') ? 1 : 2;
             }
 
             return 200;
+        }
+
+        void highlightWinningPositions(int pos1, int pos2, int pos3) {
+            int currentPos = 1;
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    if (currentPos == pos1 || currentPos == pos2 || currentPos == pos3) {
+                        board[row][col].color = RED;
+                    } else {
+                        board[row][col].color = RESET;
+                    }
+                    currentPos++;
+                }
+            }
         }
 
         /**
@@ -215,41 +256,41 @@ class Board {
         std::tuple<int, int> checkAboutToWin(char tokenSymbol) {
             // Check all the rows
             for (int i = 0; i < 3; i++) {
-                if (board[i][0] == tokenSymbol && board[i][1] == tokenSymbol && board[i][2] == ' ') {
+                if (board[i][0].symbol == tokenSymbol && board[i][1].symbol == tokenSymbol && board[i][2].symbol == ' ') {
                     return { i, 2 };
-                } else if (board[i][0] == tokenSymbol && board[i][1] == ' ' && board[i][2] == tokenSymbol) {
+                } else if (board[i][0].symbol == tokenSymbol && board[i][1].symbol == ' ' && board[i][2].symbol == tokenSymbol) {
                     return { i, 1 };
-                } else if (board[i][0] == ' ' && board[i][1] == tokenSymbol && board[i][2] == tokenSymbol) {
+                } else if (board[i][0].symbol == ' ' && board[i][1].symbol == tokenSymbol && board[i][2].symbol == tokenSymbol) {
                     return { i, 0 };
                 }
             }
 
             // Check all the columns
             for (int i = 0; i < 3; i++) {
-                if (board[0][i] == tokenSymbol && board[1][i] == tokenSymbol && board[2][i] == ' ') {
+                if (board[0][i].symbol == tokenSymbol && board[1][i].symbol == tokenSymbol && board[2][i].symbol == ' ') {
                     return { 2, i };
-                } else if (board[0][i] == tokenSymbol && board[1][i] == ' ' && board[2][i] == tokenSymbol) {
+                } else if (board[0][i].symbol == tokenSymbol && board[1][i].symbol == ' ' && board[2][i].symbol == tokenSymbol) {
                     return { 1, i };
-                } else if (board[0][i] == ' ' && board[1][i] == tokenSymbol && board[2][i] == tokenSymbol) {
+                } else if (board[0][i].symbol == ' ' && board[1][i].symbol == tokenSymbol && board[2][i].symbol == tokenSymbol) {
                     return { 0, i };
                 }
             }
 
             // Check the diagonals (LTR)
-            if (board[0][0] == tokenSymbol && board[1][1] == tokenSymbol && board[2][2] == ' ') {
+            if (board[0][0].symbol == tokenSymbol && board[1][1].symbol == tokenSymbol && board[2][2].symbol == ' ') {
                 return { 2, 2 };
-            } else if (board[0][0] == tokenSymbol && board[1][1] == ' ' && board[2][2] == tokenSymbol) {
+            } else if (board[0][0].symbol == tokenSymbol && board[1][1].symbol == ' ' && board[2][2].symbol == tokenSymbol) {
                 return { 1, 1 };
-            } else if (board[0][0] == ' ' && board[1][1] == tokenSymbol && board[2][2] == tokenSymbol) {
+            } else if (board[0][0].symbol == ' ' && board[1][1].symbol == tokenSymbol && board[2][2].symbol == tokenSymbol) {
                 return { 0, 0 };
             }
 
             // Check the diagonals (RTL)
-            if (board[0][2] == tokenSymbol && board[1][1] == tokenSymbol && board[2][0] == ' ') {
+            if (board[0][2].symbol == tokenSymbol && board[1][1].symbol == tokenSymbol && board[2][0].symbol == ' ') {
                 return { 2, 0 };
-            } else if (board[0][2] == tokenSymbol && board[1][1] == ' ' && board[2][0] == tokenSymbol) {
+            } else if (board[0][2].symbol == tokenSymbol && board[1][1].symbol == ' ' && board[2][0].symbol == tokenSymbol) {
                 return { 1, 1 };
-            } else if (board[0][2] == ' ' && board[1][1] == tokenSymbol && board[2][0] == tokenSymbol) {
+            } else if (board[0][2].symbol == ' ' && board[1][1].symbol == tokenSymbol && board[2][0].symbol == tokenSymbol) {
                 return { 0, 2 };
             }
 
@@ -264,7 +305,7 @@ class Board {
         bool isBoardFull() {
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
-                    if (board[row][col] == ' ') return false;
+                    if (board[row][col].symbol == ' ') return false;
                 }
             }
 
@@ -278,8 +319,8 @@ class Board {
         bool placeTokenRandomly() {
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
-                    if (board[row][col] == ' ') {
-                        board[row][col] = 'O';
+                    if (board[row][col].symbol == ' ') {
+                        board[row][col].setSymbol('O');
                         return true;
                     }
                 }
@@ -297,7 +338,7 @@ class Board {
  * @return bool
  */
 bool isValidInput(int position, Board b) {
-    return position > 0 && position < 10 && b.board[(position - 1) / 3][(position - 1) % 3] == ' ';
+    return position > 0 && position < 10 && b.board[(position - 1) / 3][(position - 1) % 3].symbol == ' ';
 }
 
 int main() {
