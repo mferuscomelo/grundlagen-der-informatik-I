@@ -1,6 +1,8 @@
 #include <tuple>
+#include <limits>
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 #include <stdexcept>
 
 class Board {
@@ -104,6 +106,7 @@ class Board {
             // If the player has placed in a corner, place in center
             if ((board[0][0] == 'X' || board[0][2] == 'X' || board[2][0] == 'X' || board[2][2] == 'X') && currentTurn == 2) {
                 board[1][1] = 'O';
+                hasPlacedToken = true;
             } else if (currentTurn > 2 && firstMovePosition % 2 == 1 && firstMovePosition != 5) {
                 // Place token on an edge
                 if      (board[0][1] == ' ')    board[0][1] = 'O';
@@ -111,6 +114,8 @@ class Board {
                 else if (board[1][2] == ' ')    board[1][2] = 'O';
                 else if (board[2][1] == ' ')    board[2][1] = 'O';
                 else                            placeTokenRandomly();
+
+                hasPlacedToken = true;
             }
 
             // If the player has placed in the center, place in corner
@@ -257,14 +262,24 @@ class Board {
 
 int main() {
     Board b;
-    int position;
 
     for(int i = 0; i < 100; i++) {
+        int position;
         b.drawBoard();
 
-        // Get position
-        printf("Position: ");
-        scanf("%d", &position);
+        // Get position (https://www.delftstack.com/howto/cpp/cpp-input-validation/)
+        while (true) {
+            std::cout << "Position (1-9): ";
+
+            if (std::cin >> position && position > 0 && position < 10 && b.board[(position - 1) / 3][(position - 1) % 3] == ' ') {
+                break;
+            } else {
+                printf("Invalid position. Please try again...\n");
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+
+        }
 
         const int moveResult = b.placePlayerToken(position);
 
@@ -291,5 +306,5 @@ int main() {
         }
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
