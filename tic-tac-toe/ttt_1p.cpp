@@ -45,14 +45,6 @@ class Board {
         Token board[9];
 
         /**
-         * @brief Construct a new Board object
-         * 
-         */
-        Board() {
-            // memset(board, ' ', sizeof(char) * 3 * 3); // Initialize the board with spaces
-        }
-
-        /**
          * @brief Draws the board with the pieces
          * 
          */
@@ -78,7 +70,7 @@ class Board {
         /**
          * @brief Places a player token
          * 
-         * @param position Where the token should be placed (1-9)
+         * @param position Where the token should be placed (0-8)
          * @return -1: Invalid move
          *          0: Draw
          *          1: Player 1 wins
@@ -148,7 +140,7 @@ class Board {
                 else if (board[3].symbol == ' ')    board[3].setSymbol('O');
                 else if (board[5].symbol == ' ')    board[5].setSymbol('O');
                 else if (board[7].symbol == ' ')    board[7].setSymbol('O');
-                else                            placeTokenRandomly();
+                else                                placeTokenRandomly();
 
                 hasPlacedToken = true;
             }
@@ -251,7 +243,7 @@ class Board {
          * @brief Checks if there is a possibility to win on the board
          * 
          * @param tokenSymbol The token to look for patterns with
-         * @return The row and column to win. If none available, returns (-1, -1)
+         * @return The position to win. If none available, returns -1
          */
         int checkAboutToWin(char tokenSymbol) {
             // Check all the rows
@@ -343,7 +335,7 @@ class Board {
 };
 
 /**
- * @brief Checks if the position is between 1-9 and corresponds to a free space on the board
+ * @brief Checks if the position is between 0-8 and corresponds to a free space on the board
  * 
  * @param position Position to be validated
  * @param b The current board's state
