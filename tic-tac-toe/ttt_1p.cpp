@@ -5,6 +5,26 @@
 #include <iostream>
 #include <stdexcept>
 
+// https://stackoverflow.com/questions/9158150/colored-output-in-c
+#define RESET   "\033[0m"
+#define BLACK   "\033[30m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN    "\033[36m"
+#define WHITE   "\033[37m"
+
+#define BOLDBLACK   "\033[1m\033[30m"
+#define BOLDRED     "\033[1m\033[31m"
+#define BOLDGREEN   "\033[1m\033[32m"
+#define BOLDYELLOW  "\033[1m\033[33m"
+#define BOLDBLUE    "\033[1m\033[34m"
+#define BOLDMAGENTA "\033[1m\033[35m"
+#define BOLDCYAN    "\033[1m\033[36m"
+#define BOLDWHITE   "\033[1m\033[37m"
+
 class Board {
     public:
         char board[3][3];
@@ -28,7 +48,9 @@ class Board {
                 printf("     |     |     \n"); // Add horizontal padding
 
                 for(int col = 0; col < 3; col++) {
-                    printf("  %c  ", board[row][col]); // Print with horizontal padding
+                    char symbol = board[row][col];
+                    symbol == 'X' ? printf(GREEN "  %c  ", symbol) : printf(YELLOW "  %c  ", symbol); // Print token with color and horizontal padding
+                    printf(RESET); // Reset color
 
                     col < 2 ? printf("|") : printf("\n"); // Add horizontal divider
                 }
@@ -60,13 +82,6 @@ class Board {
 
             if (firstMovePosition == -1) {
                 firstMovePosition = position; // Update firstMovePosition
-                // if (position == 1 || position == 3 || position == 7 || position == 9) {
-                //     firstMovePosition = 0; // Token placed in a corner
-                // } else if (position == 5) {
-                //     firstMovePosition = 1; // Token placed in the center
-                // } else if (position == 2 || position == 4 || position == 6 || position == 8) {
-                //     firstMovePosition = 2; // Token placed in the center
-                // }
             }
 
             const int moveResult = checkWin();
@@ -274,6 +289,16 @@ class Board {
         }
 };
 
+/**
+ * @brief Checks if the position is between 1-9 and corresponds to a free space on the board
+ * 
+ * @param position Position to be validated
+ * @param b The current board's state
+ * @return bool
+ */
+bool isValidInput(int position, Board b) {
+    return position > 0 && position < 10 && b.board[(position - 1) / 3][(position - 1) % 3] == ' ';
+}
 
 int main() {
     Board b;
@@ -322,15 +347,4 @@ int main() {
     }
 
     return EXIT_SUCCESS;
-}
-
-/**
- * @brief Checks if the position is between 1-9 and corresponds to a free space on the board
- * 
- * @param position Position to be validated
- * @param b The current board's state
- * @return bool
- */
-bool isValidInput(int position, Board b) {
-    return position > 0 && position < 10 && b.board[(position - 1) / 3][(position - 1) % 3] == ' ';
 }
