@@ -80,6 +80,15 @@ class Board {
         int firstMovePosition = -1;
         int currentTurn = 0;
 
+        /**
+         * @brief Algorithm to place the computer's token
+         * 
+         * @return -1: Invalid move
+         *          0: Draw
+         *          1: Player 1 wins
+         *          2: Computer wins
+         *        200: Continue
+         */
         int placeComputerToken() {
             // Tips taken from here: https://www.wikihow.com/Win-at-Tic-Tac-Toe
             ++currentTurn;
@@ -182,6 +191,12 @@ class Board {
             return 200;
         }
 
+        /**
+         * @brief Checks if there is a possibility to win on the board
+         * 
+         * @param tokenSymbol The token to look for patterns with
+         * @return The row and column to win. If none available, returns (-1, -1)
+         */
         std::tuple<int, int> checkAboutToWin(char tokenSymbol) {
             // Check all the rows
             for (int i = 0; i < 3; i++) {
@@ -271,7 +286,7 @@ int main() {
         while (true) {
             std::cout << "Position (1-9): ";
 
-            if (std::cin >> position && position > 0 && position < 10 && b.board[(position - 1) / 3][(position - 1) % 3] == ' ') {
+            if (std::cin >> position && isValidInput(position, b)) {
                 break;
             } else {
                 printf("Invalid position. Please try again...\n");
@@ -307,4 +322,15 @@ int main() {
     }
 
     return EXIT_SUCCESS;
+}
+
+/**
+ * @brief Checks if the position is between 1-9 and corresponds to a free space on the board
+ * 
+ * @param position Position to be validated
+ * @param b The current board's state
+ * @return bool
+ */
+bool isValidInput(int position, Board b) {
+    return position > 0 && position < 10 && b.board[(position - 1) / 3][(position - 1) % 3] == ' ';
 }
