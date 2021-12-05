@@ -40,15 +40,17 @@ int getValidInput(std::string prompt, std::string errorMessage, std::vector<int>
 
 int main(int argc, char *argv[]) {
     std::vector<int> validModeInputs = { 1, 2 };
-    int mode = argv[1][0] - '0'; // https://stackoverflow.com/questions/628761/convert-a-character-digit-to-the-corresponding-integer-in-c
+    std::string argv1 = argv[1];
 
-    if (!isValidInput(mode, validModeInputs)) {
-        // Invalid arguments, prompt for 1p or 2p mode
+    int mode;
+    if (argc < 2 || (argv1 != "1p" && argv1 != "2p")) {
         mode = getValidInput(
             "Number of players (1 or 2): ", 
             "Invalid input. Please try again...", 
             validModeInputs
         );
+    } else {
+        mode = argv1[0] - '0'; // https://stackoverflow.com/questions/628761/convert-a-character-digit-to-the-corresponding-integer-in-c
     }
 
     printf("%d Player mode selected...\n", mode);
