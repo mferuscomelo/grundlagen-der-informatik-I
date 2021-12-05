@@ -14,6 +14,14 @@ bool isValidInput(int input, std::vector<int> validInputs) {
     return false;
 }
 
+/**
+ * @brief Prompts the user until a valid input is received
+ * 
+ * @param prompt The string to display to the user, prompting them for input
+ * @param errorMessage The string to display if the input is invalid
+ * @param validInputs A vector of valid inputs
+ * @return input 
+ */
 int getValidInput(std::string prompt, std::string errorMessage, std::vector<int> validInputs) {
     // (https://www.delftstack.com/howto/cpp/cpp-input-validation/)
     int input;

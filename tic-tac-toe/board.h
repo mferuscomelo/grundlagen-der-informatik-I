@@ -143,6 +143,13 @@ class Board {
             return 200;
         }
 
+        /**
+         * @brief If a player has won, highlights the winning tokens in red and turns the rest of the tokens to white. 
+         * 
+         * @param pos1 The first position of the winning tokens
+         * @param pos2 The second position of the winning tokens
+         * @param pos3 The third position of the winning tokens
+         */
         void highlightWinningPositions(int pos1, int pos2, int pos3) {
             for (int currentPos = 0; currentPos < 9; currentPos++) {
                 if (currentPos == pos1 || currentPos == pos2 || currentPos == pos3) {
