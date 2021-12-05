@@ -1,5 +1,7 @@
 # Tic Tac Toe
-Play tic tac toe against your friend or computer! Compile and run the two player version by running `g++ ttt_2p.cpp -o ttt_2p && ./ttt_2p` in your terminal. Playing against the computer is possible by executing `g++ ttt_1p.cpp -o ttt_1p && ./ttt_1p`. 
+Play tic tac toe against your friend or computer! Compile and run the programming by running `g++ ttt.cpp -o ttt && ./ttt` in your terminal. You can also specify 1 player or 2 player mode by adding `1p` or `2p` to the end of the command. 
+
+Example (1 players): `./ttt 1p`
 
 Instruct the program where to place your token in the grid using numbers 0 to 8, arranged as follows:
 
