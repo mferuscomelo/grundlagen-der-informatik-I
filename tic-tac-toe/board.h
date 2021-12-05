@@ -159,8 +159,8 @@ class Board {
          * @return bool
          */
         bool isBoardFull() {
-            for (int pos = 0; pos < 9; pos++) {
-                if (board[pos].symbol == ' ') return false;
+            for (Token position : board) {
+                if (position.symbol == ' ') return false;
             }
 
             return true;

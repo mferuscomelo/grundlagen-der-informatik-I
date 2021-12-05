@@ -6,12 +6,6 @@
 
 #include "board.h"
 
-// TODO: use foreach function
-// for (auto &&i : v)
-// {
-    
-// }
-
 bool isValidInput(int input, std::vector<int> validInputs) {
     for (int validInput : validInputs) {
         if (validInput == input) return true;
