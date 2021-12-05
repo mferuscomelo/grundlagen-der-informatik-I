@@ -1,6 +1,7 @@
 #include "colors.h"
 #include "algorithm.h"
 
+#include <vector>
 #include <iostream>
 
 class Board {
@@ -41,27 +42,21 @@ class Board {
          *          2: Computer wins
          *        200: Continue
          */
-        int placePlayerToken(int position) {
+        int placePlayerToken(int position, int playerNum) {
             // TODO: can throw error for invalid position
             if (board[position].symbol != ' ') return -1;
 
             ++currentTurn; // Increment currentTurn counter
-            board[position].setSymbol('X'); // Place token
+
+            const char tokenSymbol = (playerNum == 1) ? 'X' : 'O';
+            board[position].setSymbol(tokenSymbol); // Place token
 
             if (firstMovePosition == -1) {
                 firstMovePosition = position; // Update firstMovePosition
             }
 
-            const int moveResult = checkWin();
-
-            if (moveResult != 200) return moveResult;
-
-            return placeComputerToken();
+            return checkWin();
         }
-    
-    private:
-        int firstMovePosition = -1;
-        int currentTurn = 0;
 
         /**
          * @brief Algorithm to place the computer's token
@@ -77,6 +72,20 @@ class Board {
             board[postion].setSymbol('O');
             return checkWin();
         }
+
+        std::vector<int> getFreeSpaces() {
+            std::vector<int> freeSpaces;
+
+            for (int i = 0; i < 9; i++) {
+                if (board[i].symbol == ' ') freeSpaces.push_back(i);
+            }
+
+            return freeSpaces;
+        }
+    
+    private:
+        int firstMovePosition = -1;
+        int currentTurn = 0;
 
         /**
          * @brief Checks result of a move
