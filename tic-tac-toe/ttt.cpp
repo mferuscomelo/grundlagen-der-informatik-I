@@ -42,10 +42,10 @@ int getValidInput(std::string prompt, std::string errorMessage, std::vector<int>
 
 int main(int argc, char *argv[]) {
     std::vector<int> validModeInputs = { 1, 2 };
-    std::string argv1 = argv[1];
+    std::string argv1 = argv[1] ? argv[1] : "";
 
     int mode;
-    if (argc < 2 || (argv1 != "1p" && argv1 != "2p")) {
+    if (argv1 != "1p" && argv1 != "2p") {
         mode = getValidInput(
             "Number of players (1 or 2): ", 
             "Invalid input. Please try again...", 
