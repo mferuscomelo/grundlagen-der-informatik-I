@@ -133,10 +133,10 @@ class Board {
 
             // Check diagonals
             if (board[0].symbol == board[4].symbol && board[4].symbol == board[8].symbol && board[0].symbol != ' ') {
-                highlightWinningPositions(1, 5, 9);
+                highlightWinningPositions(0, 4, 8);
                 return (board[0].symbol == 'X') ? 1 : 2;
             } else if (board[2].symbol == board[4].symbol && board[4].symbol == board[6].symbol && board[2].symbol != ' ') {
-                highlightWinningPositions(3, 5, 7);
+                highlightWinningPositions(2, 4, 6);
                 return (board[2].symbol == 'X') ? 1 : 2;
             }
 
