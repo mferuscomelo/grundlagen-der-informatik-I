@@ -96,9 +96,6 @@ class Board {
          *        200: Continue
          */
         int checkWin() {
-            // Check if a draw
-            if (isBoardFull()) return 0;
-
             // Check all the rows
             for (int i = 0; i < 3; i++) {
                 int pos1 = (3 * i);
@@ -139,6 +136,9 @@ class Board {
                 highlightWinningPositions(2, 4, 6);
                 return (board[2].symbol == 'X') ? 1 : 2;
             }
+
+            // Check if a draw
+            if (isBoardFull()) return 0;
 
             return 200;
         }
